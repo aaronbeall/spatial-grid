@@ -1,0 +1,14 @@
+{
+  "name": "spatial-grid",
+  "version": "1.0.0",
+  "description": "A spatial partitioning 2D grid for efficient many-to-many collision detection and such.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
