@@ -1,3 +1,10 @@
+/**
+ * A spatial grid for efficiently managing and querying objects in a 2D space.
+ * 
+ * The grid divides the space into tiles of a fixed size, allowing objects to be registered
+ * to specific tiles. This enables efficient spatial queries, such as finding objects
+ * within a circle, rectangle, or along a line segment.
+ */
 export class SpatialGrid {
     width: number;
     height: number;
@@ -19,30 +26,36 @@ export class SpatialGrid {
         this.debug = debug;
     }
 
+    /**
+     * Adds objects to the grid.
+     */
     add(...objects: SpatialGridObject[]) {
         this.objects.push(...objects);
     }
 
+    /**
+     * Removes objects from the grid.
+     */
     remove(...objects: SpatialGridObject[]) {
         this.objects = this.objects.filter(obj => !objects.includes(obj));
     }
 
     /**
-     * How many tiles horizontally
+     * Returns the number of horizontal tiles.
      */
     get xTiles() {
         return Math.floor(this.width / this.tileSize);
     }
 
     /**
-     * How many tiles vertically
+     * Returns the number of vertical tiles.
      */
     get yTiles() {
         return Math.floor(this.height / this.tileSize);
     }
 
     /**
-     * Updates the grid to register all the objects to their appropriate grid tile
+     * Updates the grid by assigning objects to their respective tiles.
      */
     update() {
         // Clear the grid
@@ -67,9 +80,10 @@ export class SpatialGrid {
     }
 
     /**
-     * Returns all the objects registered to the tile at {x,y}, and adjacent tiles based on the neighborTiles count.
+     * Returns objects in the tile at (x, y) and adjacent tiles based on neighborTiles.
      * 
-     * For example, `getNeighbors(126, 72, 1)` for a tileSize of `10` would return all the objects registered to the tiles:
+     * Example:
+     * `getNeighbors(126, 72, 1)` for a tileSize of `10` returns objects in tiles:
      * ```
      * [11,6][12,6][13,6]
      * [11,7][12,7][13,7]
@@ -106,8 +120,9 @@ export class SpatialGrid {
     }
 
     /**
-     * First use getNeighbors() to find candidates, then narrow down with intersecting circle math
-     * Requires that objects have a radius value, otherwise they are treated like a point
+     * Returns objects intersecting a circle with the given center and radius.
+     * 
+     * Note: Objects must have a `radius` property. If missing, they are treated as points.
      */
     getObjectsIntersectingCircle(x: number, y: number, radius: number) {
         if (this.debug) this.lastCheckedTiles = [];
@@ -129,8 +144,9 @@ export class SpatialGrid {
     }
 
     /**
-     * First use getNeighbors() to find candidates, then narrow down using intersecting rectangle math
-     * Requires that  objects have a {left,right,top,bottom} value, otherwise they are treated like a point using {x,y}
+     * Returns objects intersecting a rectangle with the given position and dimensions.
+     * 
+     * Note: Objects must have `left`, `right`, `top`, and `bottom` properties. If missing, they are treated as points using `x` and `y`.
      */
     getObjectsIntersectingRect(x: number, y: number, width: number, height: number) {
         if (this.debug) this.lastCheckedTiles = [];
@@ -172,8 +188,7 @@ export class SpatialGrid {
     }
 
     /**
-     * Collects neighbors in all tiles intersecting the line segment, and neighbor tiles based on 
-     * neighbor tiles based on the width (if not 0)
+     * Returns objects intersecting a line segment with the given start, end, and width.
      */
     getObjectsIntersectingLine(fromX: number, fromY: number, toX: number, toY: number, width: number = 0) {
         if (this.debug) this.lastCheckedTiles = [];
@@ -275,11 +290,38 @@ export class SpatialGrid {
 }
 
 export interface SpatialGridObject {
+    /**
+     * The x-coordinate of the object's center.
+     */
     x: number;
+
+    /**
+     * The y-coordinate of the object's center.
+     */
     y: number;
+
+    /**
+     * The radius of the object. If omitted, the object is treated as a point.
+     */
     radius?: number;
+
+    /**
+     * The left boundary of the object. If omitted, `x - radius` is used.
+     */
     left?: number;
+
+    /**
+     * The right boundary of the object. If omitted, `x + radius` is used.
+     */
     right?: number;
+
+    /**
+     * The top boundary of the object. If omitted, `y - radius` is used.
+     */
     top?: number;
+
+    /**
+     * The bottom boundary of the object. If omitted, `y + radius` is used.
+     */
     bottom?: number;
 }
