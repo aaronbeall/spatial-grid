@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "docs",
+    "declaration": false,
+    "rootDir": "."
+  },
+  "include": [
+    "src/SpatialGrid.ts",
+    "example/example.ts"
+  ]
+}

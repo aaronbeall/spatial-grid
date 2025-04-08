@@ -2,9 +2,30 @@
   "name": "spatial-grid",
   "version": "1.0.0",
   "description": "A spatial partitioning 2D grid for efficient many-to-many collision detection and such.",
-  "main": "index.js",
+  "main": "dist/SpatialGrid.js",
+  "types": "dist/SpatialGrid.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/spatial-grid.git"
+  },
+  "keywords": [
+    "spatial-grid",
+    "collision-detection",
+    "2d-grid",
+    "spatial-partitioning"
+  ],
+  "bugs": {
+    "url": "https://github.com/aaronbeall/spatial-grid/issues"
+  },
+  "homepage": "https://github.com/aaronbeall/spatial-grid#readme",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:docs": "tsc --project tsconfig.docs.json",
+    "build:library": "tsc"
   },
   "author": "",
   "license": "ISC",
