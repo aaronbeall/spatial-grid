@@ -4,15 +4,19 @@ export class SpatialGrid {
     tileSize: number;
     objects: SpatialGridObject[] = [];
 
+    debug: boolean = false;
+    lastCheckedTiles: { x: number; y: number }[] = [];
+
     /**
      * A flattened grid of xTiles * yTiles that contains list of the objects registered to each tile
      */
     #grid: SpatialGridObject[][] = [];
 
-    constructor(width: number, height: number, tileSize: number) {
+    constructor({ width, height, tileSize, debug = false }: { width: number; height: number; tileSize: number; debug?: boolean }) {
         this.width = width;
-        this.height = tileSize;
+        this.height = height;
         this.tileSize = tileSize;
+        this.debug = debug;
     }
 
     add(...objects: SpatialGridObject[]) {
@@ -46,16 +50,10 @@ export class SpatialGrid {
 
         // Iterate over all objects and place them in the appropriate tiles
         for (const obj of this.objects) {
-            const startX = Math.floor(obj.x / this.tileSize);
-            const startY = Math.floor(obj.y / this.tileSize);
-
-            // Determine the range of tiles the object occupies
-            const endX = obj.radius
-                ? Math.floor((obj.x + obj.radius) / this.tileSize)
-                : startX;
-            const endY = obj.radius
-                ? Math.floor((obj.y + obj.radius) / this.tileSize)
-                : startY;
+            const startX = Math.floor((obj.left ?? (obj.x - (obj.radius ?? 0))) / this.tileSize);
+            const startY = Math.floor((obj.top ?? (obj.y - (obj.radius ?? 0))) / this.tileSize);
+            const endX = Math.floor((obj.right ?? (obj.x + (obj.radius ?? 0))) / this.tileSize);
+            const endY = Math.floor((obj.bottom ?? (obj.y + (obj.radius ?? 0))) / this.tileSize);
 
             for (let x = startX; x <= endX; x++) {
                 for (let y = startY; y <= endY; y++) {
@@ -81,6 +79,7 @@ export class SpatialGrid {
     getNeighbors(x: number, y: number, neighborTiles: number = 1) {
         // Use a Set to ensure unique objects
         const uniqueNeighbors = new Set<SpatialGridObject>();
+        if (this.debug) this.lastCheckedTiles = [];
 
         // Calculate the tile coordinates of the given point
         const tileX = Math.floor(x / this.tileSize);
@@ -94,6 +93,7 @@ export class SpatialGrid {
 
                 // Ensure the neighbor tile is within bounds
                 if (neighborX >= 0 && neighborX < this.xTiles && neighborY >= 0 && neighborY < this.yTiles) {
+                    if (this.debug) this.lastCheckedTiles.push({ x: neighborX, y: neighborY });
                     const tileIndex = neighborY * this.xTiles + neighborX;
                     for (const obj of this.#grid[tileIndex]) {
                         uniqueNeighbors.add(obj);
@@ -110,6 +110,7 @@ export class SpatialGrid {
      * Requires that objects have a radius value, otherwise they are treated like a point
      */
     getObjectsIntersectingCircle(x: number, y: number, radius: number) {
+        if (this.debug) this.lastCheckedTiles = [];
         const candidates = this.getNeighbors(x, y, Math.ceil(radius / this.tileSize));
         const intersectingObjects: SpatialGridObject[] = [];
 
@@ -132,6 +133,7 @@ export class SpatialGrid {
      * Requires that  objects have a {left,right,top,bottom} value, otherwise they are treated like a point using {x,y}
      */
     getObjectsIntersectingRect(x: number, y: number, width: number, height: number) {
+        if (this.debug) this.lastCheckedTiles = [];
         const candidates = this.getNeighbors(x + width / 2, y + height / 2, Math.ceil(Math.max(width, height) / (2 * this.tileSize)));
         const intersectingObjects: SpatialGridObject[] = [];
 
@@ -160,6 +162,7 @@ export class SpatialGrid {
      * neighbor tiles based on the width (if not 0)
      */
     getObjectsIntersectingLine(fromX: number, fromY: number, toX: number, toY: number, width: number = 0) {
+        if (this.debug) this.lastCheckedTiles = [];
         const neighborTiles = new Set<{ x: number; y: number }>();
 
         // Bresenham's line algorithm to determine the tiles intersected by the line
@@ -178,6 +181,7 @@ export class SpatialGrid {
             // Add the current tile to the set of neighbor tiles
             if (x0 >= 0 && x0 < this.xTiles && y0 >= 0 && y0 < this.yTiles) {
                 neighborTiles.add({ x: x0, y: y0 });
+                if (this.debug) this.lastCheckedTiles.push({ x: x0, y: y0 });
             }
 
             // Check if we've reached the end of the line
@@ -204,6 +208,7 @@ export class SpatialGrid {
                     const neighborY = tile.y + offsetY;
                     if (neighborX >= 0 && neighborX < this.xTiles && neighborY >= 0 && neighborY < this.yTiles) {
                         expandedTiles.add({ x: neighborX, y: neighborY });
+                        if (this.debug) this.lastCheckedTiles.push({ x: neighborX, y: neighborY });
                     }
                 }
             }
