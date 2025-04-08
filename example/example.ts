@@ -359,7 +359,7 @@ function draw() {
 
   // Draw checked tiles in red outline
   ctx.strokeStyle = "red";
-  ctx.lineWidth = 1;
+  ctx.lineWidth = .5;
   for (const tile of spatialGrid.lastCheckedTiles) {
     ctx.strokeRect(tile.x * tileSize, tile.y * tileSize, tileSize, tileSize);
   }

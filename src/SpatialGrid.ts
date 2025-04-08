@@ -134,23 +134,37 @@ export class SpatialGrid {
      */
     getObjectsIntersectingRect(x: number, y: number, width: number, height: number) {
         if (this.debug) this.lastCheckedTiles = [];
-        const candidates = this.getNeighbors(x + width / 2, y + height / 2, Math.ceil(Math.max(width, height) / (2 * this.tileSize)));
         const intersectingObjects: SpatialGridObject[] = [];
 
-        for (const obj of candidates) {
-            const objLeft = obj.left ?? obj.x;
-            const objRight = obj.right ?? obj.x;
-            const objTop = obj.top ?? obj.y;
-            const objBottom = obj.bottom ?? obj.y;
+        // Calculate the tile range for the rectangle
+        const startX = Math.floor(x / this.tileSize);
+        const startY = Math.floor(y / this.tileSize);
+        const endX = Math.floor((x + width) / this.tileSize);
+        const endY = Math.floor((y + height) / this.tileSize);
 
-            // Check if the object intersects the rectangle
-            if (
-                objRight >= x &&
-                objLeft <= x + width &&
-                objBottom >= y &&
-                objTop <= y + height
-            ) {
-                intersectingObjects.push(obj);
+        // Iterate over the tiles within the rectangle's bounds
+        for (let tileX = startX; tileX <= endX; tileX++) {
+            for (let tileY = startY; tileY <= endY; tileY++) {
+                if (tileX >= 0 && tileX < this.xTiles && tileY >= 0 && tileY < this.yTiles) {
+                    if (this.debug) this.lastCheckedTiles.push({ x: tileX, y: tileY });
+                    const tileIndex = tileY * this.xTiles + tileX;
+                    for (const obj of this.#grid[tileIndex]) {
+                        const objLeft = obj.left ?? obj.x;
+                        const objRight = obj.right ?? obj.x;
+                        const objTop = obj.top ?? obj.y;
+                        const objBottom = obj.bottom ?? obj.y;
+
+                        // Check if the object intersects the rectangle
+                        if (
+                            objRight >= x &&
+                            objLeft <= x + width &&
+                            objBottom >= y &&
+                            objTop <= y + height
+                        ) {
+                            intersectingObjects.push(obj);
+                        }
+                    }
+                }
             }
         }
 
