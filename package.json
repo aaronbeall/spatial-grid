@@ -1,5 +1,5 @@
 {
-  "name": "spatial-grid",
+  "name": "spatial-grid-2d",
   "version": "1.0.0",
   "description": "A spatial partitioning 2D grid for efficient many-to-many collision detection and such.",
   "main": "dist/SpatialGrid.js",

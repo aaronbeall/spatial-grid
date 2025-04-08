@@ -4,6 +4,8 @@ A spatial partitioning 2D grid for efficient many-to-many collision detection an
 
 <img width="500" alt="image" src="https://github.com/user-attachments/assets/5777ec69-32da-48a6-908f-431f1f01d262" />
 
+[**Live Demo**](https://aaronbeall.github.io/spatial-grid/)
+
 ## Installation
 
 ```bash
