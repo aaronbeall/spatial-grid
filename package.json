@@ -24,12 +24,17 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:docs": "tsc --project tsconfig.docs.json",
-    "build:library": "tsc"
+    "build": "tsc",
+    "dev": "esbuild src/* example/* --bundle --outdir=docs --format=esm --servedir=docs --watch",
+    "build:docs": "esbuild src/* example/* --bundle --outdir=docs --format=esm --minify"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "esbuild": "^0.19.12",
+    "lit-html": "^3.2.1",
+    "live-server": "^1.2.2",
+    "npm-run-all": "^4.1.5",
     "typescript": "^5.8.3"
   }
 }
