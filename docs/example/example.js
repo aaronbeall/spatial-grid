@@ -1,4 +1,4 @@
-import { SpatialGrid } from "../src/SpatialGrid";
+import { SpatialGrid } from "../src/SpatialGrid.js";
 // Create a visual test harness
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
