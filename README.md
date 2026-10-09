@@ -1,2 +1,4 @@
-# spatial-grid
-A spatial partitioning 2D grid for efficient many-to-many collision detection and such.
+# ⚠⚠⚠ WORK IN PROGRESS ⚠⚠⚠
+
+# Spatial Grid
+A spatial partitioning 2D grid for efficient many-to-many collision detection and such. 
